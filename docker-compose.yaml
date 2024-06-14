@@ -5,8 +5,13 @@ services:
     build: ./server
     ports:
       - '3000:3000'
-    environment: /.env
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - .env
     depends_on:
+      - keycloak
       - db
     networks:
       - app-single_thread
@@ -14,20 +19,36 @@ services:
   frontend:
     build:
       context: ./client
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
-      - '80:80'
+      - "3001:3000"
     depends_on:
       - backend
     networks:
       - app-single_thread
 
   db:
-    image: postgres:latest
+    image: mongo:latest
     environment:
-      POSTGRES_USER: viki
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: database
+      - MONGO_INITDB_ROOT_USERNAME=viki
+      - MONGO_INITDB_ROOT_PASSWORD=123
+      - MONGO_INITDB_DATABASE=db
     ports:
-      - '5432:5432'
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-single_thread
+
+  keycloak:
+    image: jboss/keycloak:latest
+    environment:
+      DB_VENDOR: h2
+      KEYCLOAK_USER: admin
+      KEYCLO800AK_PASSWORD: admin
+    ports:
+      - "8000:8080"
     networks:
       - app-single_thread
