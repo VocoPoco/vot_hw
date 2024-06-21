@@ -3,7 +3,8 @@ import dotenv from "dotenv"
 dotenv.config();
 
 export const config = {
-    port: process.env.SERVER_PORT || 3000,
+    port: Number(process.env.SERVER_PORT) || 3000,
+    hostname: process.env.HOSTNAME || 'localhost',
     jwt_secret: process.env.JWT_SECRET || '',
     oidc: {
         client_id: process.env.OIDC_CLIENT_ID || '',

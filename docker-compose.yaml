@@ -41,14 +41,3 @@ services:
       - mongo-data:/data/db
     networks:
       - app-single_thread
-
-  keycloak:
-    image: jboss/keycloak:latest
-    environment:
-      DB_VENDOR: h2
-      KEYCLOAK_USER: admin
-      KEYCLO800AK_PASSWORD: admin
-    ports:
-      - "8000:8080"
-    networks:
-      - app-single_thread

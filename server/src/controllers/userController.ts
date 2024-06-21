@@ -20,8 +20,19 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: 'Not authenticated' });
+    try {
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({ message: 'Not authenticated' });
+        }
+
+        const { email, oidcSub } = req.body;
+        const user = await User.findOne({ email, oidcSub });
+        if (!user) {
+            return res.status(400).json({ msg: `Invalid crendntials: ${email}, ${oidcSub}` })
+        }
+
+        res.status(200).json({ msg: `User ${req.user} logged in succesfully` });
+    } catch (error) {
+        next(error);
     }
-    res.status(200).json({ message: `Hey` });
 };
